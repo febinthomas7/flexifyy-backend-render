@@ -1,8 +1,22 @@
 require("dotenv").config();
-const { app, server } = require("./socket"); // Your exported code
+require("./Models/db");
+const { app, server } = require("./socket");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
-const PORT = process.env.PORT || 5000;
+const UserChat = require("./Routes/UserChat");
 
-server.listen(PORT, () => {
-  console.log(`Socket.IO server running on port ${PORT}`);
+var corsOptions = {
+  origin: process.env.BASE_URL,
+  method: ["GET", "POST"],
+};
+
+app.use(bodyParser.json());
+app.use(cors(corsOptions));
+
+app.use("/chat", UserChat);
+const port = process.env.PORT;
+
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
