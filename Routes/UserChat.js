@@ -7,7 +7,7 @@ const {
   user,
   getusers,
   share,
-} = require("../Controllers/ChatController");
+} = require("../Controllers/ChatControllers");
 router.post(
   "/sendmessage",
   upload.fields([{ name: "image", maxCount: 1 }]),
