@@ -16,7 +16,9 @@ const {
 const sendmessage = async (req, res) => {
   try {
     const { senderId, receiverId, message, senderName } = req.body;
+    console.log("req.files:", req.file);
     const image = req.files?.image?.[0];
+
     if (message == "" && !image) {
       return res
         .status(400)
@@ -75,14 +77,25 @@ const sendmessage = async (req, res) => {
 
     // Upload image to Cloudinary if present
     let imageUrl;
+
     if (image) {
-      const result = await cloudinary.uploader.upload(
-        image.tempFilePath || image.data,
-        {
-          folder: "chatImages",
-        }
-      );
-      imageUrl = result.secure_url;
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "chatImages",
+              resource_type: "image", // or "auto"
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(image.buffer); // ✅ multer buffer
+      });
+
+      imageUrl = uploadResult.secure_url;
+      console.log("Image uploaded to Cloudinary:", imageUrl);
     }
 
     const newMessage = new messageModel({
@@ -127,7 +140,7 @@ const sendmessage = async (req, res) => {
       newFriend,
     });
   } catch (error) {
-    console.log(error);
+    console.log("error:", error);
     res.status(500).json({
       message: "Internal server error",
 
