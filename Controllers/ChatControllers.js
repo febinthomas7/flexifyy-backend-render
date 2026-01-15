@@ -75,9 +75,9 @@ const sendmessage = async (req, res) => {
 
     // Upload image to Cloudinary if present
     let imageUrl;
-    if (imageFile) {
+    if (image) {
       const result = await cloudinary.uploader.upload(
-        imageFile.tempFilePath || imageFile.data,
+        image.tempFilePath || image.data,
         {
           folder: "chatImages",
         }

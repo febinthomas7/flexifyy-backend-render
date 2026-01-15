@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
   io.emit("getOnlineUser", Object.keys(userSocketId));
 
   socket.on("newMessage", (message) => {
-    const receiverId = message.senderId;
+    const receiverId = message?.senderId;
 
     if (userSocketId[receiverId]) {
       // Send the message to all connected sockets of the receiver
